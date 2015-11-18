@@ -1,0 +1,60 @@
+apply plugin: 'groovy'
+
+// JDK version source compatibility
+//sourceCompatibility = 1.7
+
+// project version
+version = '1.0'
+
+
+repositories {
+    mavenCentral()
+
+flatDir {
+       dirs 'libs'
+   }
+}
+
+configurations {
+    ivy
+}
+
+
+dependencies {
+	compile 'org.codehaus.groovy:groovy-all:2.0.5'
+ 	ivy "org.apache.ivy:ivy:2.3.0"
+   	compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.0-RC2'
+	compile 'org.apache.httpcomponents:httpclient:4.3.6'
+	compile 'org.apache.httpcomponents:httpcore:4.4.4'
+	//compile 'net.sf.json-lib:json-lib:2.4'
+	compile name:'json-lib-2.4-jdk13'
+	compile 'org.apache.servicemix.bundles:org.apache.servicemix.bundles.xmlresolver:1.2_1'
+	compile 'net.sourceforge.nekohtml:nekohtml:1.9.22'
+	compile 'xerces:xerces:2.4.0'
+	compile 'org.slf4j:slf4j-api:1.7.13'
+	compile 'commons-logging:commons-logging:1.1.1'
+
+}
+
+tasks.withType(GroovyCompile) {
+    groovyClasspath += configurations.ivy
+}
+
+/*task runScript(dependsOn: 'classes',type: JavaExec) {
+    description 'Run Groovy script'
+
+    // Set main property to name of Groovy script class.
+    main = 'sampleGroovy.RESTCall'
+
+    // Set classpath for running the Groovy script.
+    classpath = sourceSets.main.runtimeClasspath
+
+}*/
+
+task vh (type: JavaExec)  {
+    main = "sampleGroovy.RESTCall"
+    classpath = files("libs/groovy-all-2.0.5.jar", "build/libs/${project.name}-${version}.jar")
+	classpath = sourceSets.main.runtimeClasspath + configurations.ivy
+} 
+
+defaultTasks 'vh'
